@@ -50,7 +50,8 @@ namespace Raytracing
 				distance = alpha + x;
 			else
 				return false;
-//			if (distance <= 1e-16) return false;
+			distance *= 0.9999; // to improve the image (removes the "random" black dots)
+								//			if (distance <= 1e-16) return false;
 			hit = new RayHit(distance, ray.Origin + ray.Direction * distance, this.color);
 			return true;
 		}

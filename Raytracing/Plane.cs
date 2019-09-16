@@ -51,6 +51,7 @@ namespace Raytracing
 			distance = (this.d - (this.normal.X * ray.Origin.X) - (this.normal.Y * ray.Origin.Y) - (this.normal.Z * ray.Origin.Z)) / ((this.normal.X * ray.Direction.X) + (this.normal.Y * ray.Direction.Y) + (this.normal.Z * ray.Direction.Z));
 			if (distance <= 0)
 				return false;
+			distance *= 0.9999; // to improve the image (removes the "random" black dots)
 			hit = new RayHit(distance, ray.Origin + distance * ray.Direction, this.color);
 			return true;
 		}
