@@ -27,7 +27,7 @@ namespace Raytracing
 			mainScene = new Scene(new Camera(new Vector3(0, 0, 10), new Vector3(0, 1, 0), 200, new Vector3(1, 0, 0), ClientSize.Width, ClientSize.Height, 120));
 			mainScene.Primitives.Add(new Sphere(new Vector3(-20, 230, 0), 10, Color.Red));
 			mainScene.Primitives.Add(new Sphere(new Vector3(25, 180, 0), 10, Color.Gray));
-			mainScene.Primitives.Add(new Sphere(new Vector3(0, 190, 50), 5, Color.Yellow, true)); // light bulb
+			mainScene.Primitives.Add(new Sphere(new Vector3(0, 190, 45), 5, Color.Yellow, true)); // light bulb
 			selectedSphere = (Sphere)mainScene.Primitives.Last();
 			mainScene.Primitives.Add(new Plane(new Vector3(0, 200, -10), new Vector3(0, 0, 1), Color.DarkGray)); // floor
 			mainScene.Primitives.Add(new Plane(new Vector3(-40, 0, 0), new Vector3(1, 0, 0), Color.Orange)); // right wall
@@ -97,7 +97,7 @@ namespace Raytracing
 			}
 			e.Graphics.DrawImage(b, new Point(0, 0));
 			e.Graphics.DrawString(centerLight.ToString(), Font, Brushes.Black, 0, 0);
-			this.Text = mainScene.Camera.Rays.Length * mainScene.Camera.Rays[0].Length + " Rays in " + (DateTime.Now - t).TotalMilliseconds.ToString() + " ms";
+			this.Text = mainScene.Camera.Rays.Length * mainScene.Camera.Rays[0].Length + " Rays in " + (DateTime.Now - t).TotalMilliseconds.ToString() + " ms" + " | Light Intensity: " + lightIntensity.ToString();
 		}
 
 		private void Form1_KeyUp(object sender, KeyEventArgs e)
@@ -125,19 +125,19 @@ namespace Raytracing
 				case Keys.R:
 					centerLight = new Vector3(0, 190, 45);
 					break;
-				case Keys.W:
-					break;
-				case Keys.A:
-					break;
-				case Keys.S:
-					break;
-				case Keys.D:
-					break;
 				case Keys.Escape:
 					Application.Exit();
 					break;
 				case Keys.L:
 					lightEngineEnabled = !lightEngineEnabled;
+					break;
+				case Keys.Subtract:
+				case Keys.OemMinus:
+					lightIntensity -= 50;
+					break;
+				case Keys.Add:
+				case Keys.Oemplus:
+					lightIntensity += 50;
 					break;
 				default:
 					return;
