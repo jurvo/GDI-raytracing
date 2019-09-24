@@ -15,7 +15,8 @@ namespace Raytracing
 		Scene mainScene;
 		Sphere selectedSphere;
 		Vector3 centerLight;
-		bool lightEnabled;
+		int lightIntensity;
+		bool lightEngineEnabled;
 
 		public Form1()
 		{
@@ -32,11 +33,12 @@ namespace Raytracing
 			mainScene.Primitives.Add(new Plane(new Vector3(-40, 0, 0), new Vector3(1, 0, 0), Color.Orange)); // right wall
 			mainScene.Primitives.Add(new Plane(new Vector3(40, 0, 0), new Vector3(1, 0, 0), Color.LightBlue)); // left wall
 			mainScene.Primitives.Add(new Plane(new Vector3(0, 300, 0), new Vector3(0, 1, 0), Color.LightGray)); // bot wall
-			mainScene.Primitives.Add(new Plane(new Vector3(0, 200, 50), new Vector3(0, 0, 1), Color.Gray)); // top
+			mainScene.Primitives.Add(new Plane(new Vector3(0, 200, 50), new Vector3(0, 0, 1), Color.DarkGray)); // top
 
 			centerLight = new Vector3(0, 190, 45);
+			lightIntensity = 150;
 
-			lightEnabled = true;
+			lightEngineEnabled = true;
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
@@ -44,8 +46,8 @@ namespace Raytracing
 			base.OnPaint(e);
 			DateTime t = DateTime.Now; // for perfomance messurement
 			Bitmap b = new Bitmap(mainScene.Camera.Rays.Length, mainScene.Camera.Rays[0].Length); // bitmap is used to improve speed during drawing (it is faster to draw onto the bitmap instead of the screen itself)
-			// every pixel of the screen has it's own ray in the camera object
-			// here there will be all iteratet
+																								  // every pixel of the screen has it's own ray in the camera object
+																								  // here there will be all iteratet
 			for (int x = 0; x < mainScene.Camera.Rays.Length; x++)
 			{
 				for (int y = 0; y < mainScene.Camera.Rays[0].Length; y++)
@@ -64,9 +66,10 @@ namespace Raytracing
 							}
 						}
 					}
-					if (lightEnabled && !ignoreLight && nearestHit.Distance != double.MaxValue)
+					if (lightEngineEnabled && !ignoreLight && nearestHit.Distance != double.MaxValue)
 					{
-						Ray lightRay = new Ray(nearestHit.IntersectionPoint, Vector3.Subtract(centerLight, nearestHit.IntersectionPoint));
+						Vector3 objectLightVector = Vector3.Subtract(centerLight, nearestHit.IntersectionPoint);
+						Ray lightRay = new Ray(nearestHit.IntersectionPoint, objectLightVector);
 						double maxDistance = Vector3.Subtract(centerLight, nearestHit.IntersectionPoint).GetLength();
 						foreach (Primitive p in mainScene.Primitives)
 						{
@@ -74,6 +77,18 @@ namespace Raytracing
 							{
 								nearestHit.Color = Color.Black;
 								break;
+							}
+						}
+						if (nearestHit.Color != Color.Black)
+						{
+							double l = objectLightVector.GetLength();
+							if (l >= lightIntensity)
+								nearestHit.Color = Color.Black;
+							else
+							{
+								double lightDistanceRatioInv = 1 - (l / lightIntensity);
+								Color c = nearestHit.Color;
+								nearestHit.Color = Color.FromArgb(c.A, (int)(c.R * lightDistanceRatioInv), (int)(c.G * lightDistanceRatioInv), (int)(c.B * lightDistanceRatioInv));
 							}
 						}
 					}
@@ -122,7 +137,7 @@ namespace Raytracing
 					Application.Exit();
 					break;
 				case Keys.L:
-					lightEnabled = !lightEnabled;
+					lightEngineEnabled = !lightEngineEnabled;
 					break;
 				default:
 					return;
