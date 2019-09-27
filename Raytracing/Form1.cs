@@ -66,6 +66,7 @@ namespace Raytracing
 							}
 						}
 					}
+					// light/shadow calc
 					if (lightEngineEnabled && !ignoreLight && nearestHit.Distance != double.MaxValue)
 					{
 						Vector3 objectLightVector = Vector3.Subtract(centerLight, nearestHit.IntersectionPoint);
@@ -73,12 +74,13 @@ namespace Raytracing
 						double maxDistance = Vector3.Subtract(centerLight, nearestHit.IntersectionPoint).GetLength();
 						foreach (Primitive p in mainScene.Primitives)
 						{
-							if (!p.IgnoreLight && p.Intersect(lightRay, out RayHit hit) && hit.Distance < maxDistance/* && hit.IntersectionPoint != nearestHit.IntersectionPoint*/)
+							if (!p.IgnoreLight && p.Intersect(lightRay, out RayHit hit) && hit.Distance < maxDistance)
 							{
 								nearestHit.Color = Color.Black;
 								break;
 							}
 						}
+						// "shading" / light intesity
 						if (nearestHit.Color != Color.Black)
 						{
 							double l = objectLightVector.GetLength();

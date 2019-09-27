@@ -61,11 +61,6 @@ namespace Raytracing
 		public void CrossProduct(Vector3 v) => this = Vector3.CrossProduct(this, v);
 		#endregion
 
-		/*		public double GetLength()
-				{
-					return Math.Sqrt((double)((X * X) + (Y * Y) + (Z * Z)));
-				}*/
-
 		public double GetLength()
 		{
 			return Math.Sqrt(((X * X) + (Y * Y) + (Z * Z)));
